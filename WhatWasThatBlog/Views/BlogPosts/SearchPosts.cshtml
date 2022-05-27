@@ -1,0 +1,72 @@
+﻿@using WhatWasThatBlog.Services
+@using WhatWasThatBlog.Services.Interfaces
+@inject IImageService imageService
+
+@{
+    ViewData["Title"] = "Search Results";
+    var loop = 1;
+    var even = false;
+    bool odd;
+}
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+
+            @foreach (var blogPost in Model)
+            {
+                even = (loop % 2 == 0);
+                odd = !even;
+
+                <div class="row mb-5">
+
+                    @if (odd)
+                    {
+                        <div class="col-4">
+                        @if (string.IsNullOrEmpty(blogPost.ImageType))
+                        {
+                            <img class="img-fluid" src="@blogPost.Image">
+                        } else
+                        {
+                            <img class="img-fluid" src="@imageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType)">                                        
+                        }
+                        </div>
+                    }
+
+                  <div class="col-8">
+                     <!-- Post preview-->
+                         <div class="post-preview">
+                            <a asp-controller="BlogPosts" asp-action="Details" asp-route-slug="@blogPost.Slug">
+                            <h2 class="post-title">@blogPost.Title</h2>
+                            <h3 class="post-subtitle">@blogPost.Abstract</h3>
+                                     </a>
+                            <p class="post-meta">
+                            Posted by
+                            <a href="#!">Tricia Chitwood</a>
+                            on @blogPost.Created.ToString("MMM dd, yyyy")
+                            </p>              
+                         </div>
+                    </div>
+                         <!-- Divider-->
+                         <hr class="my-4" />
+                 </div>            
+
+                    @if (even)
+                    {
+                        <div class="col-4">
+                            @if (string.IsNullOrEmpty(blogPost.ImageType))
+                            {
+                                <img class="img-fluid" src="@blogPost.Image">
+                            } else
+                            {
+                                 <img class="img-fluid" src="@imageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType)">   
+                            }
+                        </div>
+                    }
+
+            loop++;
+            
+               }
+            <!-- Pager-->
+            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
+        
+    </div>
+</div>

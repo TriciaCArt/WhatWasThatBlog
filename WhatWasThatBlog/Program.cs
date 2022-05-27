@@ -1,10 +1,15 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using WhatWasThatBlog.Data;
+using WhatWasThatBlog.Helpers;
 using WhatWasThatBlog.Models;
+using WhatWasThatBlog.Services;
+using WhatWasThatBlog.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");;
+var connectionString = ConnectionService.GetConnectionString(builder.Configuration);
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString)); 
@@ -12,12 +17,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<BlogUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+//Jason thinks this should be updated in order to specify BOTH the User and Role types
+builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultTokenProviders().AddDefaultUI().AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddTransient<DataService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<DisplayService>();
+builder.Services.AddScoped<IEmailSender, BasicEmailService>();
+builder.Services.AddScoped<SearchService>();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+var shell = app.Services.CreateScope();
+var dataService = shell.ServiceProvider.GetRequiredService<DataService>();
+await dataService.SetupDBAsync();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -40,8 +57,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "details",
+    pattern: "PostDetails/{slug}",
+    defaults: new { controller = "BlogPosts", action="Details" }
+);
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

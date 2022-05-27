@@ -1,8 +1,72 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using WhatWasThatBlog.Services.Interfaces
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+@model IPagedList<BlogPost>
+
+@inject IImageService ImageService
+
+@{
+    ViewData["Title"] = "What Was That?";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+
+
+            @foreach (var blogPost in Model)
+            {
+                @if (string.IsNullOrEmpty(blogPost.ImageType))
+                {
+                    <div>
+                        <img class="img-fluid" src="~/images/jen-hawaii weird flower.jpg">
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <img class="img-fluid" src="@ImageService.ConvertByteArrayToFile(blogPost.ImageData, blogPost.ImageType)">
+                    </div>
+                }
+                <!-- Post preview-->
+                <div class="post-preview">
+                    <a asp-controller="BlogPosts" asp-action="Details" asp-route-slug="@blogPost.Slug">
+                        <h2 class="post-title">@blogPost.Title</h2>
+                        <h3 class="post-subtitle">@blogPost.Abstract</h3>
+                    </a>
+                    <p class="post-meta">
+                        Posted by
+                        <a href="#!">Tricia Chitwood</a>
+                        on @blogPost.Created.ToString("MMM dd, yyyy")
+                    </p>
+                </div>
+
+                <!-- Divider-->
+                <hr class="my-4" />
+            }
+
+
+            <!-- Pager-->
+            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
+
+            <div>
+                <div>
+                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                </div>
+            </div>
+            <div>
+                <div>
+                    @Html.PagedListPager(Model, pageNum => Url.Action("Index", new {pageNum }),
+                    new PagedListRenderOptions {
+                        LiElementClasses = new string[]{"page-item"},
+                        PageClasses = new string[]{"page-link"}
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

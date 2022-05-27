@@ -1,48 +1,259 @@
-﻿@model WhatWasThatBlog.Models.BlogPost
+﻿@using Microsoft.AspNetCore.Identity
+@using WhatWasThatBlog.Models
+@using WhatWasThatBlog.Services.Interfaces
+@using WhatWasThatBlog.Enums
+@using WhatWasThatBlog.Services
+
+@model BlogPost
+
+@inject IImageService ImageService
+@inject UserManager<BlogUser> _userManager
+@inject DisplayService _displayService
 
 @{
     ViewData["Title"] = "Details";
+    ViewData["BlogPostTitle"] = Model.Title;
+    ViewData["Abstract"] = Model.Abstract;
+    ViewData["Created"] = Model.Created.ToString("MMM dd, yyyy");
+    ViewData["ImageData"] = Model.ImageData;
+    ViewData["ImageType"] = Model.ImageType;
 }
 
-<h1>Details</h1>
+<article class="row">
+    <div class="col-8 justify-content-start">
+        @Html.Raw(Model.Body)
+    </div>
+    <div class="col-4 justify-content-end">
+        <div class="form-group">
+
+            @if (Model.ImageData != null)
+            {
+                <img id="Imagefile" class="img-fluid mt-2" style="width:240px;height:240px" src="@ImageService.ConvertByteArrayToFile(Model.ImageData, Model.ImageType)">
+            }
+            else
+            {
+                <img id="ImageFile" class="img-fluid mt-2" style="width:120px;height:120px" src="https://cdn.icon-icons.com/icons2/233/PNG/512/Contacts_26253.png">
+            }
+
+            @*<label asp-for="ImageFile" class="control-label"></label>
+            <input asp-for="ImageFile" name="MyImage" type="file" class="form-control" accept=".jpg,.png,.gif"
+                   onchange="document.getElementById('MyImage').src = window.URL.createObjectURL(this.files[0])" />
+            <span asp-validation-for="ImageData" class="text-danger"></span>*@
+        </div>
+    </div>
+</article>
+
+
+<div class="row g-4 justify-content-center">
+    <div class="col-8 offset-2">
+        @foreach (var tag in Model.Tags)
+        {
+            <div class="col text-center">
+                <a class="btn btn-warning btn-outline-dark w-100">@tag.Text</a>
+                <a class="btn btn-dark btn-outline-light w-100" asp-action="PostsByTag" asp-route-id="@tag.Id">@tag.Text</a>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="ScrollTo">
+
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <div class="col">
+            <form asp-controller="BlogPostComments" asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="BlogPostId" value="@Model.Id">
+
+                <div class="form-group">
+                    <label class="control-label">Comments</label>
+                    <input name="Comment" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-dark w-50" />
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+
+        <div class="col">            
+            <a asp-area="Identity" asp-page="/Account/Login" 
+            asp-route-returnUrl="@Url.Action("Details", "BlogPosts", new { slug = Model.Slug})" 
+            class="btn btn-dark btn-outline-light w-100">Login to add a Comment! What, do you think we just let any ninny say whatever?!?</a>
+            
+        </div>
+
+    }
+</div>
+<hr />
+
+<div class="row g-2 m-2 p-2">
+    @foreach (var comment in Model.BlogPostComments.OrderByDescending(c => c.Created))
+    {
+        <div class="col-9 card border border-1 border-dark m-3">
+            <div class="card-header">
+                @if (comment.Moderated is null)
+                {
+
+                    <span>Author: @comment.Author!.FullName</span>
+
+                }
+                else
+                {
+                    <h6>Moderator: @await _displayService.DisplayModeratorName(comment.ModeratorId!)</h6>
+                    <h6>Reason: @comment.ModReason</h6>
+                }
+            </div>
+
+            <div id="Target-@(comment.Id)" class="card-body">
+                @if (comment.Moderated is null)
+                {
+                    @comment.Comment
+                }
+                else
+                {
+                    @comment.ModeratedComment
+                }
+            </div>
+            <div class="card-footer">
+
+                @if (comment.Moderated is null)
+                {
+                    <h6>Created On: @comment.Created.ToString("MMM dd, yyyy")</h6>
+                }
+                else
+                {
+                    <h6>Moderated On: @comment.Moderated?.ToString("MMM dd, yyyy")</h6>
+                }
+
+
+                @if (comment.AuthorId == _userManager.GetUserId(User) && comment.Moderated is null)
+                {
+                    <button class="btn btn-dark float-end btnEdit" data-bs-toggle="modal" data-bs-target="#ModalEdit" data-comment-id="@comment.Id">EDIT</button>
+                }
+
+                @if (User.IsInRole("Moderator"))
+                {
+                    @if (comment.Moderated is null)
+                    {
+                        <button class="btn btn-dark btn-outline-light float-end ms-2 btnMod" data-bs-toggle="modal" data-bs-target="#ModalModerate" data-comment-id="@comment.Id">MODERATE</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-dark btn-outline-light float-end ms-2 btnMod" data-bs-toggle="modal" data-bs-target="#ModalModerate" data-comment-id="@comment.Id" data-mod-reason="@comment.ModReason.Value">MODERATE</button>
+                    }
+
+                }
+            </div>
+        </div>
+    }
+</div>
+
 
 <div>
-    <h4>BlogPost</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Abstract)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Abstract)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Body)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Body)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
     <a asp-action="Index">Back to List</a>
 </div>
+
+@*Modals*@
+<div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form id="frmEdit" asp-controller="BlogPostComments" asp-action="Edit">
+                    <input type="hidden" name="Id" id="ModalId" />
+                    <div class="form-group mb-3">
+                        <label class="control-label">Comment</label>
+                        <textarea name="Comment" id="ModalComment" class="form-control" rows=5></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="btnSave" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalModerate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Moderate Modal</h5>
+                <button id="btnSubmit" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form asp-controller="BlogPostComments" asp-action="Moderate">
+                    <input type="hidden" name="Id" id="ModalModId" />
+
+                    <div class="form-group mb-3">
+                        <label class="control-label">Original Comment</label>
+                        <textarea id="ModalModCommentReadOnly" class="form-control" rows=5></textarea>
+                    </div>
+
+                    <hr />
+
+                    <div class="form-group mb-3">
+                        <label class="control-label">Moderation Reason</label>
+                        <select name="ModReason" id="ModReason" class="form-control" asp-items="@Html.GetEnumSelectList<ModReason>()"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Moderated Comment</label>
+                        <textarea name="ModeratedComment" id="ModeratedComment" class="form-control" rows=5></textarea>
+                    </div>
+                    <button type="submit" id="btnMod" class="btn btn-dark w-100">Save Changes</button>
+                </form>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById("btnSave").addEventListener("click", function(){
+        document.getElementById("frmEdit").submit();
+    });
+</script>
+
+<script>
+    document.querySelectorAll("button.btnEdit").forEach( (btn) => {
+    btn.addEventListener("click", function(){
+       let targetId = this.getAttribute("data-comment-id");
+       document.getElementById("ModalId").value = targetId;
+       document.getElementById("ModalComment").innerText = document.getElementById(`Target-${targetId}`).innerText;
+       });
+    });
+</script>
+
+<script>
+    document.querySelectorAll("button.btnMod").forEach( (btn) => {
+        btn.addEventListener("click", function(){
+            let targetId = this.getAttribute("data-comment-id");
+            document.getElementById("ModalModId").value = targetId;
+
+            let originalComment = document.getElementById(`Target-${targetId}`).innerText;
+            document.getElementById("ModalModCommentReadOnly").innerText = originalComment;
+            document.getElementById("ModalComment").innerText.originalComment;
+
+            let modReason = this.getAttribute("data-mod-reason");
+            document.getElementById("ModReason").value = modReason;
+        });
+    });
+</script>
+
+}

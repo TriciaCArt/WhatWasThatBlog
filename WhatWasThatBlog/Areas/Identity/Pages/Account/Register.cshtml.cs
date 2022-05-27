@@ -71,6 +71,17 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            //The next two properties are custom, and enable the page to collect these values
+            [Required]
+            [Display(Name ="First Name")]
+            [StringLength(40, ErrorMessage ="No, That is not your name. Stop it.", MinimumLength = 2)]
+            public string FirstName { get; set; } = string.Empty;
+            [Required]
+            [Display (Name ="Last Name")]
+            [StringLength(40, ErrorMessage = "Please enter a real last name, not longer than {1}", MinimumLength =2)]
+            public string LastName { get; set; } = string.Empty;
+
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -117,6 +128,11 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                //this is custom and hands off the user supplied First and Last names to the BlogUser instance
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

@@ -14,6 +14,8 @@ namespace WhatWasThatBlog.Data
         public virtual DbSet<BlogPost> BlogPosts { get; set; } = default!;
 
         public DbSet<WhatWasThatBlog.Models.BlogPostComment> BlogPostComment { get; set; }
+
+        public DbSet<WhatWasThatBlog.Models.Tag> Tag { get; set; }
        
     }
 }

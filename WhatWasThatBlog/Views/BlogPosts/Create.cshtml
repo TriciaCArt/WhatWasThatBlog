@@ -1,41 +1,73 @@
-﻿@model WhatWasThatBlog.Models.BlogPost
+﻿@using WhatWasThatBlog.Models
+@using WhatWasThatBlog.Enums
+
+@model BlogPost
 
 @{
     ViewData["Title"] = "Create";
 }
+<div class="container">
+    <div class="row">
+        <h1>Create</h1>
 
-<h1>Create</h1>
+        <h4>BlogPost</h4>
+    </div>
+    <hr />
+    <div class="row p-1">
+        <div class="col p-1">
+            <form asp-action="Create" id="workDangit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group m-3">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group m-3">
+                    <label asp-for="Abstract" class="control-label"></label>
 
-<h4>BlogPost</h4>
-<hr />
-<div class="row">
-    <div class="col">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Abstract" class="control-label"></label>
-                <input asp-for="Abstract" class="form-control"/>
-                <span asp-validation-for="Abstract" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Body"></label>
-                <div id="quillEditor">
+                    <textarea asp-for="Abstract" class="form-control" rows=2></textarea>
+                    <span asp-validation-for="Abstract" class="text-danger"></span>
+                </div>
+                <div class="form-group m-3">
+                    <label asp-for="Body" class="control-label"></label>
+                    <div id="quillEditor">
+                        @if (Model.Body != string.Empty)
+                        {
+                            @Html.Raw(Model.Body)
+                        }
+                    </div>
+                    <input type="hidden" asp-for="Body" />
+                    <span asp-validation-for="Body" class="text-danger"></span>
+                </div>
+
+                <div class="form-group m-3">
+                    <label asp-for="BlogPostState" class="form-control"></label>
+                    <select asp-for="BlogPostState" class="form-Control" asp-items="@Html.GetEnumSelectList<BlogPostState>()"></select>
+                    @*ViewBag.BlogPostState*@
+                    <span asp-validation-for="BlogPostState" class="text-danger"></span>
+                </div>
+                <div class="form-group m-3">
+                    <label asp-for="Tags" class="control-label"></label>
+                    <select name="TagIds" class="form-control" asp-items="ViewBag.TagIds" multiple></select>
 
                 </div>
-                <input type="hidden" asp-for="Body" />
-            </div>
 
-           
+                <div class="form-group">
+                    <label asp-for="ImageFile" class="control-label"></label>
+                    <input asp-for="ImageFile" type="file" class="form-control" accept=".jpg,.png,.gif" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+                <div>
+                   <img class="img-thumbnail w-50" src="" alt="">
+                </div>
 
-            <div class="form-group">
-                <input id="Target" type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -44,12 +76,14 @@
 </div>
 
 @section Scripts {
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-    document.querySelector("form").addEventListener("submit", function(){
-       
-        document.getElementById("Body").value = quill.getText();
-    })
+        //Tell the form to do some stuff real quick before it submits the data
+        document.getElementById("workDangit").addEventListener("submit", function () {
+            //Stuff the data currently inside of the Quill editor inside the hidden input the name="Body"
+            document.getElementById("Body").value = quill.container.firstChild.innerHTML;
+        })
     </script>
 }
