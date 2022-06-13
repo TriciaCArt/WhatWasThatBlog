@@ -1,0 +1,91 @@
+﻿@using WhatWasThatBlog.Models
+@using WhatWasThatBlog.Services.Interfaces
+
+@model IEnumerable<BlogPost>
+
+@inject IImageService _imageService
+
+@{
+    ViewData["Title"] = "In Preview Index";
+}
+<div class="row">
+    <div class="col text-center p-2">
+        <h1>Blog Posts In Preview</h1>
+    </div>    
+</div>
+<div class="row m-2 p-2">
+    <table class="table m-2 p-2">
+        <thead>
+            <tr>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.ImageData)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.Abstract)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.Slug)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.Body)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.Created)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.Tags)
+                </th>
+                <th class="m-2 p-2">
+                    @Html.DisplayNameFor(model => model.BlogPostState)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="text-center">
+                    <td class="m-2 p-2">
+                        @if (item.ImageData.Length > 0)
+                        {
+                            <img src="@_imageService.ConvertByteArrayToFile(item.ImageData, item.ImageType)" class="img-fluid m-1 p-1 img-thumbnail w-50">
+                        }
+                    </td>
+                    <td class="m-2 p-2">
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td class="m-2 p-2">
+                        @Html.DisplayFor(modelItem => item.Abstract)
+                    </td>
+                    <td class="m-2 p-2">
+                        @Html.DisplayFor(modelItem => item.Slug)
+                    </td>
+                    <td class="m-2 p-2">
+                        @Html.DisplayFor(modelItem => item.Body)
+                    </td>
+                    <td class="m-2 p-2">
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td class="m-2 p-2">
+                        @foreach (var tag in item.Tags)
+                        {
+                            @tag.Text <br />
+                        }
+                    </td>
+                    <td class="m-2 p-2">
+                        @Html.DisplayFor(modelItem => item.BlogPostState)
+                    </td>
+
+
+                    <td class="m-2 p-2">
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-slug="@item.Slug">Details</a> |
+                        <a asp-action="SoftDelete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

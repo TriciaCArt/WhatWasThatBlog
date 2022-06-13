@@ -6,6 +6,7 @@ using WhatWasThatBlog.Helpers;
 using WhatWasThatBlog.Models;
 using WhatWasThatBlog.Services;
 using WhatWasThatBlog.Services.Interfaces;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = ConnectionService.GetConnectionString(builder.Configuration);
@@ -27,9 +28,36 @@ builder.Services.AddScoped<DisplayService>();
 builder.Services.AddScoped<IEmailSender, BasicEmailService>();
 builder.Services.AddScoped<SearchService>();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "What Was That Blog API",
+        Version = "v1",
+        Description = "Serving Up Blog data for you using .Net 6",
+        Contact = new OpenApiContact
+        {
+            Name = "Tricia Chitwood",
+            Email = "TChitwoodCoding@gmail.com",
+            Url = new Uri("https://www.TriciaChitwoodArt.com")
+        }
+    });
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+app.UseSwagger();
+
+app.UseSwaggerUI(c =>
+{
+
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Public API");
+    c.InjectStylesheet("~/css/swaggerr.css");
+    c.InjectJavascript("~/js/swagger.js");
+    c.DocumentTitle = "WWT Blog Public API";
+});
 
 var shell = app.Services.CreateScope();
 var dataService = shell.ServiceProvider.GetRequiredService<DataService>();

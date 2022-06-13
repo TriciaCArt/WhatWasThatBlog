@@ -1,0 +1,112 @@
+﻿@using WhatWasThatBlog.Enums
+@using WhatWasThatBlog.Services.Interfaces
+
+@model WhatWasThatBlog.Models.BlogPost
+
+@inject IImageService ImageService
+
+@{
+    ViewData["Title"] = "Delete";
+}
+<div class="row">
+    <div class="col-md-8 offset-2 text-center">
+        <h1>Delete Blog Post</h1>
+        <h4>Are you sure you want to delete this Blog entry, and all associated attachments?</h4>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-8 offset-2 text-center">
+        <form asp-action="SoftDelete">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group m-3">
+                <label asp-for="Title" class="control-label"></label>
+                <p>@Html.DisplayFor(model => model.Title)</p>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group m-3">
+                <label asp-for="Abstract" class="control-label"></label>
+                <p>@Html.DisplayFor(model => model.Abstract)</p>
+                <span asp-validation-for="Abstract" class="text-danger"></span>
+            </div>
+            <div class="form-group m-3">
+                <label asp-for="Body" class="control-label"></label>
+                <p>@Html.DisplayFor(model => model.Body) </p>
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+
+            <div class="form-group m-3">
+                <label asp-for="ImageFile" class="control-label"></label>
+                <img id="Imagefile" class="img-fluid img-thumbnail mt-2" style="width:120px;height:120px" src="@ImageService.ConvertByteArrayToFile(Model.ImageData, Model.ImageType)">
+                <span asp-validation-for="ImageData" class="text-danger"></span>                               
+            </div>  
+                    
+        
+        <input type="submit" value="Delete" asp-action="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    
+
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+}
+
+
+    @*@model WhatWasThatBlog.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>BlogPost</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            
+        </dt>
+        <dd class = "col-sm-10">
+            
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Abstract)
+        </dt>
+        <dd class = "col-sm-10">
+            
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+        <dd class = "col-sm-10">
+            
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageData)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ImageData)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+*@

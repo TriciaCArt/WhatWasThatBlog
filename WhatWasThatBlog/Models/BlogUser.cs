@@ -14,7 +14,7 @@ namespace WhatWasThatBlog.Models
 
         [Required]
         [Display(Name ="Last Name")]
-        [StringLength(40, ErrorMessage ="Nope. You are an idiot. Do you now know your own name?", MinimumLength =2)]
+        [StringLength(40, ErrorMessage = "Nope. You are an idiot. Do you know your own name?", MinimumLength =2)]
         public string? LastName { get; set; }
 
         public string? NickName { get; set; }

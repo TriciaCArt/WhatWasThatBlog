@@ -78,7 +78,7 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
             public string FirstName { get; set; } = string.Empty;
             [Required]
             [Display (Name ="Last Name")]
-            [StringLength(40, ErrorMessage = "Please enter a real last name, not longer than {1}", MinimumLength =2)]
+            [StringLength(40, ErrorMessage = "Please enter a real last name and stop being a ninny. Not longer than {1}", MinimumLength =2)]
             public string LastName { get; set; } = string.Empty;
 
 

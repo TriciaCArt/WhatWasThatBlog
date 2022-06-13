@@ -1,8 +1,4 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,7 +7,6 @@ using WhatWasThatBlog.Data;
 using WhatWasThatBlog.Models;
 using WhatWasThatBlog.Services.Interfaces;
 using WhatWasThatBlog.Utilities;
-using WhatWasThatBlog.Enums;
 using WhatWasThatBlog.Services;
 
 namespace WhatWasThatBlog.Controllers
@@ -40,7 +35,7 @@ namespace WhatWasThatBlog.Controllers
                                       .Include(b => b.Tags)
                                       .ToListAsync();
             return View(posts);
-        }        
+        }
 
         [AllowAnonymous]
         [HttpGet]
@@ -51,6 +46,24 @@ namespace WhatWasThatBlog.Controllers
                             .Include(t => t.BlogPosts)
                             .FirstOrDefaultAsync(t => t.Id == id);
             return View("SearchPosts", taggy.BlogPosts.ToList());
+        }
+
+        public async Task<IActionResult> InDevIndex()
+        {
+            var posts = await _context.BlogPosts.Include(b => b.Tags).Where(b => b.BlogPostState == Enums.BlogPostState.InDevelopment).ToListAsync();
+            return View("Index", posts);
+        }
+
+        public async Task<IActionResult> InPreviewIndex()
+        {
+            var posts = await _context.BlogPosts.Include(b => b.Tags).Where(b => b.BlogPostState == Enums.BlogPostState.InPreview).ToListAsync();
+            return View("Index", posts);
+        }
+
+        public async Task<IActionResult> SoftDeleteIndex()
+        {
+            var posts = await _context.BlogPosts.Include(b => b.Tags).Where(b => b.IsDeleted).ToListAsync();
+            return View("Index", posts);
         }
 
         [AllowAnonymous]
@@ -139,7 +152,7 @@ namespace WhatWasThatBlog.Controllers
                 }
 
                 blogPost.Created = DateTime.SpecifyKind(blogPost.Created, DateTimeKind.Utc);
-                
+
 
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
@@ -271,6 +284,18 @@ namespace WhatWasThatBlog.Controllers
 
             return View(blogPost);
         }
+        public async Task<IActionResult> SoftDelete(int id)
+        {
+            var deletedPosts = await _context.BlogPosts.FirstOrDefaultAsync(m => m.IsDeleted);
+            _context.BlogPosts.Remove(deletedPosts);
+              
+            if (deletedPosts == null)
+            {
+                return NotFound();
+            }
+
+            return View("Index", deletedPosts);
+        }
 
         // POST: BlogPosts/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -287,6 +312,6 @@ namespace WhatWasThatBlog.Controllers
         {
             return _context.BlogPosts.Any(e => e.Id == id);
         }
-       
+
     }
 }
