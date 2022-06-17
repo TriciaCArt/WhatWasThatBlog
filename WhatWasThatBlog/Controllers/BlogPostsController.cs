@@ -135,16 +135,7 @@ namespace WhatWasThatBlog.Controllers
                 {
                     blogPost.ImageData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFile);
                     blogPost.ImageType = blogPost.ImageFile.ContentType;
-                }
-
-                var badContent = _configuration["DefaultSettings:QuillContent"];
-                if (blogPost.Body == badContent)
-                {
-                    ModelState.AddModelError("", "No! Ugh, that is TERRIBLE! Do it again!");
-                    ModelState.AddModelError("", "And again I am here.");
-
-                    return View(blogPost);
-                }
+                }              
 
                 foreach (var tagId in tagIds)
                 {

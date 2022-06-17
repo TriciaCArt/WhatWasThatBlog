@@ -38,9 +38,9 @@
             </div>
             <div class="form-group m-3">
                 <label asp-for="Body" class="control-label"></label>
-                <div id="quillEditor">@Html.Raw(Model.Body)</div>
+                <textarea id="open-source-plugins" asp-for="Body" class="form-control" rows="6"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
-                <input type="hidden" asp-for="Body" />
+                
             </div>
 
             <div class="form-group m-3">
@@ -87,7 +87,5 @@
     await Html.RenderPartialAsync("_ValidationScriptsPartial");
 }
 
-<script>
-    document.querySelectorAll("form").addEventListener("submit", function() {document.getElementById("Body").value = quill.container.firstChild.innerHTML;})
-</script>
+
 }
