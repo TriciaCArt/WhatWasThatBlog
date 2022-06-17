@@ -39,8 +39,18 @@
                             <a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Index">What Was That?</a>
                         </li>
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Create">Create</a></li>
+
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Tags" asp-action="Index">Tags</a></li>
+
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Swagger" asp-action="Index">Swagger APIs</a></li>
+
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="Index">Comments</a></li>
+                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="ModeratedIndex">Under Construction</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="DeletedIndex">Deleted Comments</a></li>
+
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InDevIndex">Under Construction</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InPreviewIndex">In Preview Blogs</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="SoftDeleteIndex">Deleted Blogs</a></li>
 
                     }
                     else if (User.IsInRole("Moderator"))
