@@ -28,49 +28,63 @@
 
             @if (Model.ImageData != null)
             {
-                <img id="Imagefile" class="img-fluid mt-2" style="width:240px;height:240px" src="@ImageService.ConvertByteArrayToFile(Model.ImageData, Model.ImageType)">
+                <img id="Imagefile" class="img-fluid mt-2" style="width:300px;height:170px" src="@ImageService.ConvertByteArrayToFile(Model.ImageData, Model.ImageType)">
             }
             else
             {
                 <img id="ImageFile" class="img-fluid mt-2" style="width:120px;height:120px" src="https://cdn.icon-icons.com/icons2/233/PNG/512/Contacts_26253.png">
             }
-
+            <br />
+            <br />
+            <hr />
             @*<label asp-for="ImageFile" class="control-label"></label>
             <input asp-for="ImageFile" name="MyImage" type="file" class="form-control" accept=".jpg,.png,.gif"
-                   onchange="document.getElementById('MyImage').src = window.URL.createObjectURL(this.files[0])" />
+            onchange="document.getElementById('MyImage').src = window.URL.createObjectURL(this.files[0])" />
             <span asp-validation-for="ImageData" class="text-danger"></span>*@
+            <br />
+            <br />
+            @foreach (var tag in Model.Tags)
+            {
+                <div class="text-start">
+                    <label class="">Tags</label>
+                    <a class="btn btn-success w-50" asp-action="PostsByTag" asp-route-id="@tag.Id">@tag.Text</a>
+                </div>
+            }
+
         </div>
     </div>
 </article>
 
 
-<div class="row g-4 justify-content-center">
+@*<div class="row g-4 justify-content-center">
     <div class="col-8 offset-2">
         @foreach (var tag in Model.Tags)
         {
-            <div class="col text-center">
-                <a class="btn btn-warning btn-outline-dark w-100">@tag.Text</a>
-                <a class="btn btn-dark btn-outline-light w-100" asp-action="PostsByTag" asp-route-id="@tag.Id">@tag.Text</a>
+            <div class="text-start">
+                <label class="">Tags</label>
+                <a class="btn btn-success w-50" asp-action="PostsByTag" asp-route-id="@tag.Id">@tag.Text</a>
             </div>
         }
     </div>
-</div>
+</div>*@
 
-<div id="ScrollTo">
+<div id="ScrollTo" class="row g-2 m-2 p-2">
 
     @if (User.Identity!.IsAuthenticated)
     {
-        <div class="col">
+        <div class="col-9 card border border-1 borderalert-dark m-3">
             <form asp-controller="BlogPostComments" asp-action="Create">
+                <div class="card-header">
+                    <p>Share your thoughts!</p>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" name="BlogPostId" value="@Model.Id">
-
-                <div class="form-group">
-                    <label class="control-label">Comments</label>
+                </div>
+                <div class="form-group card-body">
+                    <label class="control-label">Leave A Comment</label>
                     <input name="Comment" class="form-control" />
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-dark w-50" />
+                <div class="form-group text-center">
+                    <input type="submit" value="Create" class="btn btn-success w-50" />
                 </div>
             </form>
         </div>
@@ -78,10 +92,10 @@
     else
     {
 
-        <div class="col">            
-            <a asp-area="Identity" asp-page="/Account/Login" 
-            asp-route-returnUrl="@Url.Action("Details", "BlogPosts", new { slug = Model.Slug})" class="btn btn-dark btn-outline-light w-100">Login to add a Comment! What, do you think we just let any ninny say whatever?!?</a>
-            
+        <div class="col">
+            <a asp-area="Identity" asp-page="/Account/Login"
+           asp-route-returnUrl="@Url.Action("Details", "BlogPosts", new { slug = Model.Slug})" class="btn btn-dark btn-outline-light w-100">Login to add a Comment! What, do you think we just let any ninny say whatever?!?</a>
+
         </div>
 
     }
@@ -212,7 +226,7 @@
                     </div>
                     <button type="submit" id="btnMod" class="btn btn-dark w-100">Save Changes</button>
                 </form>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -223,36 +237,36 @@
 </div>
 
 @section Scripts {
-<script>
-    document.getElementById("btnSave").addEventListener("click", function(){
-        document.getElementById("frmEdit").submit();
-    });
-</script>
-
-<script>
-    document.querySelectorAll("button.btnEdit").forEach( (btn) => {
-    btn.addEventListener("click", function(){
-       let targetId = this.getAttribute("data-comment-id");
-       document.getElementById("ModalId").value = targetId;
-       document.getElementById("ModalComment").innerText = document.getElementById(`Target-${targetId}`).innerText;
-       });
-    });
-</script>
-
-<script>
-    document.querySelectorAll("button.btnMod").forEach( (btn) => {
-        btn.addEventListener("click", function(){
-            let targetId = this.getAttribute("data-comment-id");
-            document.getElementById("ModalModId").value = targetId;
-
-            let originalComment = document.getElementById(`Target-${targetId}`).innerText;
-            document.getElementById("ModalModCommentReadOnly").innerText = originalComment;
-            document.getElementById("ModalComment").innerText.originalComment;
-
-            let modReason = this.getAttribute("data-mod-reason");
-            document.getElementById("ModReason").value = modReason;
+    <script>
+        document.getElementById("btnSave").addEventListener("click", function() {
+            document.getElementById("frmEdit").submit();
         });
-    });
-</script>
+    </script>
+
+    <script>
+        document.querySelectorAll("button.btnEdit").forEach((btn) => {
+            btn.addEventListener("click", function() {
+                let targetId = this.getAttribute("data-comment-id");
+                document.getElementById("ModalId").value = targetId;
+                document.getElementById("ModalComment").innerText = document.getElementById(`Target-${targetId}`).innerText;
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll("button.btnMod").forEach((btn) => {
+            btn.addEventListener("click", function() {
+                let targetId = this.getAttribute("data-comment-id");
+                document.getElementById("ModalModId").value = targetId;
+
+                let originalComment = document.getElementById(`Target-${targetId}`).innerText;
+                document.getElementById("ModalModCommentReadOnly").innerText = originalComment;
+                document.getElementById("ModalComment").innerText.originalComment;
+
+                let modReason = this.getAttribute("data-mod-reason");
+                document.getElementById("ModReason").value = modReason;
+            });
+        });
+    </script>
 
 }

@@ -14,15 +14,26 @@ namespace WhatWasThatBlog.Models
 
         [Required]
         [Display(Name ="Last Name")]
-        [StringLength(40, ErrorMessage = "Nope. You are an idiot. Do you know your own name?", MinimumLength =2)]
+        [StringLength(40, ErrorMessage = "Nope. Try again.", MinimumLength =2)]
         public string? LastName { get; set; }
 
         public string? NickName { get; set; }
 
-        [NotMapped]
-        public string? FullName => $"{FirstName}{LastName}";
 
+        public byte[]? ImageData { get; set; }
+        public string? ImageType { get; set; }
+        [NotMapped]
+        [Display(Name = "Choose an Image")]
+        public IFormFile? ImageFile { get; set; }
+
+
+        [NotMapped]
+        public string? FullName => $"{FirstName} {LastName}";
+
+
+        public virtual ICollection<BlogPost> BlogPosts { get; set; } = new HashSet<BlogPost>();
         public virtual ICollection<BlogPostComment> BlogPostComments { get; set; } = new HashSet<BlogPostComment>();
+
 
 
     }

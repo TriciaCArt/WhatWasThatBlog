@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhatWasThatBlog.Data;
@@ -11,13 +12,14 @@ using WhatWasThatBlog.Data;
 namespace WhatWasThatBlog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220620135228_AddedImgFile")]
+    partial class AddedImgFile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -236,7 +238,8 @@ namespace WhatWasThatBlog.Data.Migrations
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -291,6 +294,12 @@ namespace WhatWasThatBlog.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ImageType")
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -353,6 +362,9 @@ namespace WhatWasThatBlog.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -361,6 +373,8 @@ namespace WhatWasThatBlog.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Tag");
                 });
@@ -448,6 +462,15 @@ namespace WhatWasThatBlog.Data.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("BlogPost");
+                });
+
+            modelBuilder.Entity("WhatWasThatBlog.Models.Tag", b =>
+                {
+                    b.HasOne("WhatWasThatBlog.Models.BlogUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("WhatWasThatBlog.Models.BlogPost", b =>

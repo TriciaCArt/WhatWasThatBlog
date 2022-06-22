@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>What Was That? A Coding Blog</title>
+    <title>@ViewData["Title"] - Coding Blog</title>
 
     <script src="https://cdn.tiny.cloud/1/d3oci0k993adaskdp3mejo07uj1a9aef5l5nim7r7ds5ettg/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
@@ -17,66 +17,60 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
 
-    
+
     <link href="~/css/styles.css" rel="stylesheet" />
 </head>
 
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light" id="mainNav">
-        <div class="container px-4 px-lg-5">
+        <div class="container p-4">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WhatWasThatBlog</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
                 <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="ContactMe">Contact Me</a></li>
+                <ul class="navbar-nav ms-auto p-2">
+                    <li class="nav-item"><a class="nav-link p-2" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link p-2" asp-controller="Home" asp-action="ContactMe">Contact Me</a></li>
+                    <li class="nav-item"><a class="nav-link p-2" asp-controller="Home" asp-action="About">About</a></li>
 
                     @if (User.IsInRole("Admin"))
                     {
-                        
-                        <li class="nav-item">
-                            <a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Index">What Was That?</a>
+                        <li class="nav-item dropdown ms-auto p-2">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Admin Menu
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Index">What Was That?</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Create">Create</a></li>
+
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Tags" asp-action="Index">Tags</a></li>
+
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Swagger" asp-action="Index">Swagger APIs</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InDevIndex">In Development</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InPreviewIndex">In Preview Blogs</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="SoftDeleteIndex">Deleted Blogs</a></li>
+
+                            </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Create">Create</a></li>
-
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Tags" asp-action="Index">Tags</a></li>
-
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Swagger" asp-action="Index">Swagger APIs</a></li>
-
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="Index">Comments</a></li>
-                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="ModeratedIndex">Under Construction</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="DeletedIndex">Deleted Comments</a></li>
-
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InDevIndex">Under Construction</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InPreviewIndex">In Preview Blogs</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="SoftDeleteIndex">Deleted Blogs</a></li>
-
                     }
                     else if (User.IsInRole("Moderator"))
                     {
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Index">Manage Blogs</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="Index">Comments</a></li>
-                    }
-                    else if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
-                    {
-                        
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InDevIndex">Under Construction</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="InPreviewIndex">In Preview Blogs</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="SoftDeleteIndex">Deleted Blogs</a></li>
-
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="Index">Comments</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="ModeratedIndex">Under Construction</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="DeletedIndex">Deleted Comments</a></li>
-                    }
-                   
-                    
-                      
-                    
-
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Moderator Menu
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Index">Manage Blogs</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="Index">Comments</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="ModeratedIndex">Under Construction</a></li>
+                                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="DeletedIndex">Deleted Comments</a></li>                                
+                            </ul>
+                        </li>
+                    }                    
                 </ul>
                 <partial name="_LoginPartial" />
             </div>
@@ -98,7 +92,7 @@
                         <form class="form-inline" asp-controller="BlogPosts" asp-action="SearchPosts" method="post">
                             <div class="input-group">
                                 <input class="form-control" type="search" name="SearchString" placeholder="Enter search string" />
-                                <button type="submit" class="btn btn-outline-dark my-2 fw-bold" value="Search"></button>
+                                <button type="submit" class="btn btn-success btn-outline-dark m-2 fw-bold" value="Search">Search</button>
 
                             </div>
                         </form>
@@ -109,13 +103,13 @@
         </div>
     </header>
 
-
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center align-items-center">
-            @RenderBody()
+    <main class="flex-shrink-0">
+        <div class="container h-100">
+            <div class="row justify-content-center align-items-center h-100">
+                @RenderBody()
+            </div>
         </div>
-    </div>
-
+    </main>
 
 
 
@@ -126,7 +120,7 @@
                 <div class="col-md-10 col-lg-8 col-xl-7">
                     <ul class="list-inline text-center">
                         <li class="list-inline-item">
-                            <a href="#!">
+                            <a href="https://twitter.com/TriciaChitArt">
                                 <span class="fa-stack fa-lg">
                                     <i class="fas fa-circle fa-stack-2x"></i>
                                     <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
@@ -134,7 +128,7 @@
                             </a>
                         </li>
                         <li class="list-inline-item">
-                            <a href="#!">
+                            <a href="https://www.facebook.com/tricia.chitwood.5">
                                 <span class="fa-stack fa-lg">
                                     <i class="fas fa-circle fa-stack-2x"></i>
                                     <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
@@ -142,7 +136,7 @@
                             </a>
                         </li>
                         <li class="list-inline-item">
-                            <a href="#!">
+                            <a href="https://github.com/TriciaCArt?tab=repositories">
                                 <span class="fa-stack fa-lg">
                                     <i class="fas fa-circle fa-stack-2x"></i>
                                     <i class="fab fa-github fa-stack-1x fa-inverse"></i>
@@ -162,9 +156,9 @@
     <!-- Core theme JS-->
     <script src="~/js/scripts.js"></script>
     <script src="~/js/site.js"></script>
-    
 
-    
+
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

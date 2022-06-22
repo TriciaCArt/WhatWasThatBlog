@@ -2,23 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 using WhatWasThatBlog.Models;
+using WhatWasThatBlog.Services.Interfaces;
 
 namespace WhatWasThatBlog.Areas.Identity.Pages.Account
 {
@@ -30,13 +24,15 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<BlogUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IImageService _imageService;
 
         public RegisterModel(
             UserManager<BlogUser> userManager,
             IUserStore<BlogUser> userStore,
             SignInManager<BlogUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IImageService imageService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +40,7 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _imageService = imageService;
         }
 
         /// <summary>
@@ -59,12 +56,7 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
         /// </summary>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
-
+        
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -76,6 +68,7 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
             [Display(Name ="First Name")]
             [StringLength(40, ErrorMessage ="No, That is not your name. Stop it.", MinimumLength = 2)]
             public string FirstName { get; set; } = string.Empty;
+
             [Required]
             [Display (Name ="Last Name")]
             [StringLength(40, ErrorMessage = "Please enter a real last name and stop being a ninny. Not longer than {1}", MinimumLength =2)]
@@ -109,24 +102,44 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+
+
+            [Display(Name = "Custom Image")]
+            public IFormFile ImageFile { get; set; }
+
+            [Display(Name = "Image")]
+            public byte[] ImageData { get; set; } = Array.Empty<byte>();
+
+            [Display(Name = "Image Type")]
+            public string ImageType { get; set; } = string.Empty;
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                user.ImageFile = Input.ImageFile;
+
+                if(Input.ImageFile != null)
+                {
+                    user.ImageData = await _imageService.ConvertFileToByteArrayAsync(Input.ImageFile);
+                    user.ImageType = Input.ImageFile.ContentType;
+                }
+                
+                      
+                await _userStore.SetUserNameAsync(user, Input.FirstName + Input.LastName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 //this is custom and hands off the user supplied First and Last names to the BlogUser instance

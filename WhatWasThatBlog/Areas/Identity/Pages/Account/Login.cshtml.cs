@@ -61,6 +61,17 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            //These next two properties are the custom properties I laid out in the registration
+            [Required]
+            [Display(Name = "First Name")]
+            [StringLength(40, ErrorMessage = "No, that is not your name. Stop it.", MinimumLength = 2)]
+            public string FirstName { get; set; } = string.Empty;
+
+            [Required]
+            [Display(Name = "Last Name")]
+            [StringLength(40, ErrorMessage = "Enter a real last name, and stop being a ninny. Not longer than {1}", MinimumLength = 2)]
+            public string LastName { get; set; } = string.Empty;
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -95,24 +106,22 @@ namespace WhatWasThatBlog.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);            
 
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var userName = Input.FirstName + Input.LastName;
 
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

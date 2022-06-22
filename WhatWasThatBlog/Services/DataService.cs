@@ -48,9 +48,10 @@ namespace WhatWasThatBlog.Services
         {
             //Create a new instance of BlogUser
             var email = "Tricia@Chitwood.com";
+            
             BlogUser user = new()
             {
-                UserName = email,
+                UserName = "TriciaChitwood",
                 Email = email,
                 FirstName = "Tricia",
                 LastName = "Chitwood",
@@ -69,7 +70,7 @@ namespace WhatWasThatBlog.Services
             var modEmail = "Sam@clemson.edu";
             BlogUser modUser = new()
             {
-                UserName = modEmail,
+                UserName = "SamGuido",
                 Email = modEmail,
                 FirstName = "Sam",
                 LastName = "Guido",

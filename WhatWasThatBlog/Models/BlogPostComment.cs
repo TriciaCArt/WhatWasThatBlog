@@ -13,13 +13,15 @@ namespace WhatWasThatBlog.Models
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public DateTime? Moderated { get; set; }
-        
+
+        [Display(Name = "Moderated Comment")]
         public string? ModeratedComment { get; set; }
         public ModReason? ModReason { get; set; }
         public bool IsDeleted { get; set; }
 
 
         [Required]
+        [StringLength(500, ErrorMessage = "The {0} must be at least {2} and no more than {1}!")]
         public string Comment { get; set; } = string.Empty;
 
 

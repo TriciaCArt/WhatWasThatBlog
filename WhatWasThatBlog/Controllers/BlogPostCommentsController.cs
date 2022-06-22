@@ -68,7 +68,7 @@ namespace WhatWasThatBlog.Controllers
                 _context.Add(blogPostComment);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "BlogPosts", new { slug }, "ScrollTo");
+                return RedirectToAction("PostDetails", new { slug });
             }
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Abstract", blogPostComment.BlogPostId);
             return View(blogPostComment);

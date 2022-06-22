@@ -41,6 +41,11 @@ namespace WhatWasThatBlog.Controllers
             return View(posts);
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         public IActionResult ContactMe()
         {
             return View();
