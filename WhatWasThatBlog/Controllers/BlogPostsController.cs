@@ -11,7 +11,7 @@ using WhatWasThatBlog.Services;
 
 namespace WhatWasThatBlog.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Moderator")]
     public class BlogPostsController : Controller
     {
         private readonly ApplicationDbContext _context;

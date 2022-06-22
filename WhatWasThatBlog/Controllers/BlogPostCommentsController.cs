@@ -1,8 +1,4 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +64,7 @@ namespace WhatWasThatBlog.Controllers
                 _context.Add(blogPostComment);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("PostDetails", new { slug });
+                return RedirectToAction("Details", "BlogPosts", new { slug });
             }
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Abstract", blogPostComment.BlogPostId);
             return View(blogPostComment);

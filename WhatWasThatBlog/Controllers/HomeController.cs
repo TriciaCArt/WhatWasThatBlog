@@ -34,7 +34,7 @@ namespace WhatWasThatBlog.Controllers
             var pageSize = 5;
 
             var posts = await _context.BlogPosts
-                        .Where(b => b.BlogPostState == BlogPostState.ProductionReady && !b.IsDeleted)
+                        .Where(b => b.BlogPostState == BlogPostState.ProductionReady && !b.IsDeleted)                        
                         .OrderByDescending(b=>b.Created)
                         .ToPagedListAsync(pageNum, pageSize);
 

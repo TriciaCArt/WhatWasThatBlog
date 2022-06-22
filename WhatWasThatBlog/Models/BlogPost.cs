@@ -19,6 +19,8 @@ namespace WhatWasThatBlog.Models
         [Required]
         public string Body { get; set; } = "";
 
+        public string TruncatedBody { get { return this.Body.Length > 400 ? this.Body.Substring(0, 400) + "..." : this.Body; } }
+
         [DataType(DataType.Date)]
         [Display(Name = "Created Date")]
         public DateTime Created { get; set; } = DateTime.UtcNow;

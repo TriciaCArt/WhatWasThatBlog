@@ -42,7 +42,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Admin Menu
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu p-2" aria-labelledby="navbarDropdown">
 
                                 <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Index">What Was That?</a></li>
                                 <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPosts" asp-action="Create">Create</a></li>
@@ -70,7 +70,8 @@
                                 <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="BlogPostComments" asp-action="DeletedIndex">Deleted Comments</a></li>                                
                             </ul>
                         </li>
-                    }                    
+                    }
+                    @*else if (User.IsInRole("Moderator") || (User.IsInRole("Admin"){}                 *@
                 </ul>
                 <partial name="_LoginPartial" />
             </div>
