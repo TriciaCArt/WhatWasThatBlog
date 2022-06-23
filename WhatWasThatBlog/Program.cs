@@ -87,7 +87,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "details",
     pattern: "PostDetails/{slug}",
-    defaults: new { controller = "BlogPosts", action="Details" }
+    defaults: new { controller = "BlogPosts", action="Details", slug="" }
 );
 
 app.MapControllerRoute(

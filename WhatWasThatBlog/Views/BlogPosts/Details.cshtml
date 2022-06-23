@@ -68,16 +68,17 @@
     </div>
 </div>*@
 
-<div id="ScrollTo" class="row g-2 m-2 p-2">
+<div id="scrollTo" class="row g-2 m-2 p-2">
 
     @if (User.Identity!.IsAuthenticated)
     {
         <div class="col-9 card border border-1 borderalert-dark m-3">
-            <form asp-controller="BlogPostComments" asp-action="Create">
+            <form asp-controller="BlogPostComments" asp-action="Create" method="post">
                 <div class="card-header">
                     <p>Share your thoughts!</p>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" name="BlogPostId" value="@Model.Id">
+                <input type="hidden" name="Slug" value="@Model.Slug">
                 </div>
                 <div class="form-group card-body">
                     <label class="control-label">Leave A Comment</label>
@@ -145,6 +146,7 @@
                 @if (comment.AuthorId == _userManager.GetUserId(User) && comment.Moderated is null)
                 {
                     <button class="btn btn-dark float-end btnEdit" data-bs-toggle="modal" data-bs-target="#ModalEdit" data-comment-id="@comment.Id">EDIT</button>
+                    
                 }
 
                 @if (User.IsInRole("Moderator"))
@@ -189,6 +191,7 @@
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-dark" id="btnDelete">DELETE</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" id="btnSave" class="btn btn-primary">Save changes</button>
             </div>

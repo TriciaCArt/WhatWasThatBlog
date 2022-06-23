@@ -52,7 +52,7 @@ namespace WhatWasThatBlog.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost]        
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("BlogPostId,Comment")] BlogPostComment blogPostComment, string slug)
         {
@@ -64,7 +64,9 @@ namespace WhatWasThatBlog.Controllers
                 _context.Add(blogPostComment);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "BlogPosts", new { slug });
+               
+
+               return RedirectToAction("Details", "Blogposts", new { slug }, "scrollTo");
             }
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Abstract", blogPostComment.BlogPostId);
             return View(blogPostComment);
